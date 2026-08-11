@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10"
+# 项目运行依赖由 uv 根据这里和 uv.lock 安装。
 dependencies = [
     "allure-pytest==2.13.5",
     "colorlog>=6.10.1",

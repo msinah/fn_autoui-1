@@ -1,3 +1,9 @@
+"""pytest 的全局配置与 UI 自动化执行核心。
+
+pytest 会自动加载根目录中的 conftest.py，因此测试文件无需显式导入它。
+这里集中管理浏览器生命周期、YAML 步骤执行、失败诊断、Allure 报告和结果通知。
+"""
+
 import pytest
 import allure
 import os
@@ -9,13 +15,17 @@ from urllib.parse import urlsplit, urlunsplit
 from unit_tools.ding_rebot import send_dd_msg
 
 
+# ==================== 浏览器生命周期 ====================
 @pytest.fixture(scope="session")
 def browser(playwright):
+    """整个测试会话只启动一次 Chromium 浏览器，并在结束时关闭。"""
     browser = playwright.chromium.launch(headless=False)
     yield browser
     browser.close()
 
+# ==================== YAML 定位器解析 ====================
 def _normalize_selector(locator: str) -> str:
+    """规范 CSS/XPath 定位器，并给裸 XPath 自动补上 ``xpath=`` 前缀。"""
     if locator is None:
         return locator
     locator = str(locator).strip()
@@ -29,6 +39,10 @@ def _normalize_selector(locator: str) -> str:
 
 
 def _resolve_get_by_locator(page, locator_spec: str):
+    """安全解析 YAML 中形如 get_by_text(...) 的 Playwright 定位器。
+
+    使用 AST 白名单而不是 eval，避免 YAML 内容执行任意 Python 代码。
+    """
     if locator_spec is None:
         return None
     text = str(locator_spec).strip()
@@ -116,6 +130,7 @@ def _resolve_get_by_locator(page, locator_spec: str):
 
 
 def _resolve_case_locator(page, case: dict):
+    """尝试把单个 YAML 步骤中的 locator 解析为 Locator 对象。"""
     raw_locator = case.get("locator")
     if not raw_locator:
         return None, ""
@@ -126,13 +141,16 @@ def _resolve_case_locator(page, case: dict):
 
 
 def _resolve_locator_spec(page, locator_spec):
+    """返回可执行定位器，以及用于日志和报错的原始定位器描述。"""
     get_by_locator = _resolve_get_by_locator(page, locator_spec)
     if get_by_locator is not None:
         return get_by_locator, str(locator_spec)
     return _normalize_selector(locator_spec), str(locator_spec or "")
 
 
+# ==================== 页面诊断与操作后等待 ====================
 def _visible_texts(page, selector, limit=12):
+    """提取指定选择器命中的可见文本，供失败诊断使用。"""
     try:
         texts = page.locator(selector).evaluate_all(
             """(nodes, limit) => nodes
@@ -155,6 +173,7 @@ def _visible_texts(page, selector, limit=12):
 
 
 def _page_diagnostics(page):
+    """收集当前 URL、标题以及常见页面错误提示。"""
     try:
         title = page.title()
     except Exception:
@@ -189,12 +208,14 @@ def _page_diagnostics(page):
 
 
 def _fail_with_page_diagnostics(page, message):
+    """把诊断信息附加到 Allure，然后让当前 pytest 用例失败。"""
     detail = _page_diagnostics(page)
     allure.attach(detail, name="页面诊断信息", attachment_type=allure.attachment_type.TEXT)
     pytest.fail(f"{message}\n{detail}")
 
 
 def _wait_after_click(page, case: dict):
+    """按 YAML 配置等待点击后的目标元素出现；未配置时不额外等待。"""
     wait_locator = case.get("wait_after_locator") or case.get("wait_for_locator")
     if not wait_locator:
         return
@@ -220,6 +241,7 @@ def _wait_after_click(page, case: dict):
 
 
 def _format_allure_step(case: dict) -> str:
+    """把 YAML 步骤整理成便于阅读的 Allure 步骤标题。"""
     name = str(case.get("name") or case.get("method") or "未命名步骤")
     method = case.get("method")
     details = []
@@ -232,11 +254,14 @@ def _format_allure_step(case: dict) -> str:
     return f"{name} ({', '.join(details)})" if details else name
 
 
+# ==================== 失败截图 ====================
 def _is_playwright_page(value):
+    """通过关键方法判断某个 fixture 参数是否为 Playwright Page。"""
     return all(hasattr(value, attr) for attr in ("screenshot", "url", "title"))
 
 
 def _attach_failure_screenshot(item):
+    """查找测试参数中的 Page，并把全页截图与 URL 附加到 Allure。"""
     pages = []
     for name, value in getattr(item, "funcargs", {}).items():
         if _is_playwright_page(value):
@@ -277,13 +302,16 @@ def _attach_failure_screenshot(item):
 
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):
+    """pytest 每阶段结束时触发；测试主体失败时自动截图。"""
     outcome = yield
     report = outcome.get_result()
     if report.when == "call" and report.failed:
         _attach_failure_screenshot(item)
 
 
+# ==================== Allure 结果后处理 ====================
 def _clear_allure_parameters(config):
+    """清除参数化产生的冗长 parameters，使报告展示更简洁。"""
     report_dir = (
         getattr(config.option, "allure_report_dir", None)
         or os.getenv("ALLURE_RESULTS_DIR")
@@ -312,6 +340,7 @@ def _has_label(labels, name):
 
 
 def _behavior_values_from_result(result):
+    """从结果标题、描述和 suite 推导 Allure 的 feature/story。"""
     title = str(result.get("name") or "").strip()
     description = str(result.get("description") or "").strip()
     labels = result.get("labels") or []
@@ -328,6 +357,7 @@ def _behavior_values_from_result(result):
 
 
 def _ensure_allure_behavior_labels(config):
+    """给缺少行为标签的 Allure 结果补上 feature 和 story。"""
     report_dir = (
         getattr(config.option, "allure_report_dir", None)
         or os.getenv("ALLURE_RESULTS_DIR")
@@ -360,19 +390,29 @@ def _ensure_allure_behavior_labels(config):
 
 
 def pytest_sessionfinish(session, exitstatus):
+    """测试会话结束后统一整理 Allure JSON 结果。"""
     _clear_allure_parameters(session.config)
     _ensure_allure_behavior_labels(session.config)
 
 
+# ==================== YAML 关键字执行器 ====================
 @pytest.fixture
 def run_case_fixture():
+    """返回 YAML 用例执行函数。
+
+    测试调用 ``run_case_fixture(page, CaseData)`` 后，这里会逐条执行
+    ``CaseData["cases"]``。每条 case 的 method 就是动作关键字，例如
+    goto、click、fill、press、hover 或 wait_for_timeout。
+    """
     # 匹配并搜集（在元组中）所有包含位置的函数
     def run_step(case, func, *value):
+        """执行普通 Playwright 方法，并包装成一个 Allure 步骤。"""
         with allure.step(_format_allure_step(case)):
             func(*value)
 
 
     def run_case(page, testdata):
+        """解释一组 YAML 数据，执行完成后返回最终 Page 或 Frame。"""
         cases = testdata['cases']
         if testdata.get("title"):
             title = str(testdata["title"])
@@ -382,13 +422,15 @@ def run_case_fixture():
             des = str(testdata["des"])
             allure.dynamic.description(des)
             allure.dynamic.story(des)
-        current_page = page # 记录当前标签页
+        # current_page 会随弹窗或 Frame 切换而改变，page 保留原始页面。
+        current_page = page
         try:
             # 遍历cases
             for case in cases:
                 func_name = case['method']
                 # 判断method如果为goto，则重新拼接url地址
                 if func_name == "goto":
+                    # YAML 可以只写相对路径，运行时会与 baseUrl 拼成完整地址。
                     expected_url = str(case.get('url', '')).strip()
                     raw_url = str(case.get('url', '')).strip()
                     raw_url = raw_url.strip('`').strip()
@@ -434,6 +476,8 @@ def run_case_fixture():
                 # switch_to_page == 其他 时不进行任何处理
                 else:
                     func_name = case['method']
+                    # click/fill/press 单独处理，以便先等待元素可见，并兼容
+                    # 普通 CSS/XPath 和 get_by_* 两种定位器写法。
                     if func_name == "click":
                         get_by_locator, locator_desc = _resolve_case_locator(current_page, case)
                         if get_by_locator is not None:
@@ -569,6 +613,8 @@ def run_case_fixture():
                             with allure.step(_format_allure_step(case)):
                                 current_page.press(locator, str(key))
                             continue
+                    # 其他关键字（如 hover、wait_for_timeout）按 method 名反射调用。
+                    # 参数取自 YAML 字段顺序，因此不要随意在动作字段中间插入元数据。
                     func = current_page.__getattribute__(func_name)
                     caselist = list(case.values())
                     run_step(case, func, *caselist[3:])  # 传递参数时解析包
@@ -577,6 +623,7 @@ def run_case_fixture():
         return current_page
     return run_case
 
+# ==================== 终端汇总与通知 ====================
 def format_duration(seconds):
     """将秒数转换为时分秒格式"""
     return str(timedelta(seconds=seconds)).split('.')[0]

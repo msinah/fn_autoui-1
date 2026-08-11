@@ -1,4 +1,5 @@
-# 我的产品亚马逊汇出流程
+"""“我的产品”向多个平台汇出的 UI 流程集合。"""
+
 import os
 
 import pytest
@@ -8,6 +9,7 @@ from unit_tools.assert_control import *
 from unit_tools.handle_data.read_data import data
 
 
+# 每个平台维护独立 YAML，但共用下面的浏览器上下文和断言结构。
 data_path = FILE_PATH["cmout"]
 cmoutamazon_dict = data.load_yaml(os.path.join(data_path, "cmoutamazon.yaml"))
 cmoutwalmart_dict = data.load_yaml(os.path.join(data_path, "cmoutwalmart.yaml"))
@@ -19,6 +21,7 @@ cmouttiktok_dict = data.load_yaml(os.path.join(data_path, "cmouttiktok.yaml"))
 
 @pytest.fixture(scope="class")
 def shared_context(browser):
+    """为整类用例创建一次上下文，优先恢复 configs/cookies.json 登录态。"""
     storage_state_path = FILE_PATH.get("set_cookies")
     context = (
         browser.new_context(storage_state=storage_state_path)
@@ -33,6 +36,7 @@ def shared_context(browser):
 
 @pytest.fixture(scope="class")
 def shared_page(shared_context):
+    """所有平台流程复用一个 Page，减少重复启动页面的成本。"""
     page = shared_context.new_page()
     try:
         yield page
@@ -41,6 +45,8 @@ def shared_page(shared_context):
 
 
 class TestAmazonOut:
+    """分别验证 Amazon、Walmart、Temu、SHEIN、TikTok 等汇出流程。"""
+
     @pytest.mark.skipif(cmoutamazon_dict["loginpage"][0]["skip"] == True, reason="跳过执行")
     @pytest.mark.parametrize("CaseData", cmoutamazon_dict["loginpage"])
     def test_cmoutamazon(self, shared_page, run_case_fixture, CaseData):

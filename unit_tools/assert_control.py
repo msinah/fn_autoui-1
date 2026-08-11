@@ -1,6 +1,12 @@
+"""项目通用断言封装。
+
+这些函数在原生 assert 之外补充统一日志，失败时继续抛出异常交给 pytest 处理。
+"""
+
 from typing import Any
 from playwright.sync_api import Page
 from unit_tools.log_util.recordlog import logs
+
 
 def assert_title(page: Page, assertion: str, title: str):
     """

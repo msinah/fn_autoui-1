@@ -1,3 +1,5 @@
+# 顶层 loginpage 是参数化数据列表；列表中的每一项会生成一条 pytest 用例。
+# title/des 用于 Allure，skip 控制是否跳过，cases 按从上到下的顺序执行。
 case_common:
   allureEpic: UI自动化
   allureFeature: 登录模块
@@ -10,6 +12,7 @@ loginpage:
     need_cookie: False    #是否需要登录cookie，默认是“是”，可不写
     cases:
 
+      # method 是 Playwright 动作关键字；相对 URL 会与 RunConfig.baseUrl 拼接。
       - name: 打开登录页面
         switch_to_page: False
         method: goto

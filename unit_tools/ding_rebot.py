@@ -1,3 +1,5 @@
+"""钉钉机器人签名和消息发送工具。"""
+
 import base64
 import time
 import hmac
@@ -9,8 +11,9 @@ from configs import setting
 
 def generate_sign():
     """
-    生成签名计算
-    :return:
+    根据当前时间戳和机器人密钥生成钉钉要求的签名参数。
+
+    :return: ``(timestamp, sign)`` 二元组
     """
     # 获取当前时间的时间戳
     timestamp = str(round(time.time() * 1000))
@@ -28,13 +31,14 @@ def generate_sign():
     return timestamp, sign
 
 
-def send_dd_msg(content,at_all=False):
+def send_dd_msg(content, at_all=False):
     """
     向钉钉群发送消息
     :param content: 发送内容
     :param at_all: @全员，默认为True
     :return:
     """
+    # 每次请求都要使用与签名匹配的最新时间戳。
     timestamp, sign = generate_sign()
     # 组成一个完整的url地址
     url = f"{setting.webhook}&timestamp={timestamp}&sign={sign}"

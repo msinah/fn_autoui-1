@@ -1,10 +1,15 @@
+"""简单缓存工具。
+
+Cache 负责文件缓存，CacheHandler 负责当前 Python 进程内的内存缓存。
+"""
+
 import os
 from typing import Any, Text, Union
 from unit_tools.util import ensure_path_sep
 
 
 class Cache:
-    """ 设置、读取缓存 """
+    """设置和读取项目 cache 目录下的文件缓存。"""
 
     def __init__(self, filename: Union[Text, None]) -> None:
         # 如果filename不为空，则操作指定文件内容
@@ -68,8 +73,11 @@ _cache_config = {}
 
 
 class CacheHandler:
+    """保存测试运行期间共享的临时数据，例如接口登录 token。"""
+
     @staticmethod
     def get_cache(cache_data):
+        """按名称读取一项内存缓存。"""
         try:
             return _cache_config[cache_data]
         except KeyError:
@@ -77,4 +85,5 @@ class CacheHandler:
 
     @staticmethod
     def update_cache(*, cache_name, value):
+        """新增或覆盖一项内存缓存。"""
         _cache_config[cache_name] = value

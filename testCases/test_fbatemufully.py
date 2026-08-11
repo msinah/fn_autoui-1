@@ -1,4 +1,5 @@
-# temu全托管下单
+"""Temu 全托管购物车下单流程。"""
+
 import pytest
 
 from unit_tools.handle_data.read_data import data
@@ -7,12 +8,14 @@ from unit_tools.assert_control import *
 import os
 
 
+# 加购和支付拆成两份 YAML，在同一个 Page 中连续执行。
 data_path = FILE_PATH['data']
 cases_dict = data.load_yaml(os.path.join(data_path,'fbmaddtocart.yaml'))
 temu_fully_dict = data.load_yaml(os.path.join(data_path,'fbatemufullypaycart.yaml'))
 
 @pytest.fixture(scope="class")
 def shared_context(browser):
+    """载入已保存登录态，并为整类测试复用上下文。"""
     storage_state_path = FILE_PATH.get("set_cookies")
     context = browser.new_context(storage_state=storage_state_path) if storage_state_path and os.path.exists(storage_state_path) else browser.new_context()
     try:
@@ -23,6 +26,7 @@ def shared_context(browser):
 
 @pytest.fixture(scope="class")
 def shared_page(shared_context):
+    """共享页面以保留加入购物车后的业务状态。"""
     page = shared_context.new_page()
     try:
         yield page
@@ -31,6 +35,8 @@ def shared_page(shared_context):
 
 
 class Testfbmcart:
+    """按“加入购物车 → Temu 全托管支付”的顺序执行。"""
+
     @pytest.mark.skipif(cases_dict['loginpage'][0]['skip'] == True, reason='跳过执行')
     @pytest.mark.parametrize('CaseData', cases_dict['loginpage'])
     def test_fbmaddtocart(self, shared_page, run_case_fixture, CaseData):

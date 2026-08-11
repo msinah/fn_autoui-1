@@ -1,3 +1,4 @@
+# 通用加入购物车流程，供 FBM、FBA、Temu、TikTok 等支付用例复用。
 loginpage:
   - title: 购物车
     des: 我的产品添加购物车
@@ -5,6 +6,7 @@ loginpage:
     need_cookie: True    #是否需要登录cookie，默认是“是”，可不写
     cases:
 
+      # 每个步骤固定包含说明、页面切换标记、动作和动作参数。
       - name: 打开我的产品页面
         switch_to_page: False
         method: goto
@@ -42,6 +44,7 @@ loginpage:
         switch_to_page: False
         method: fill
         locator: //*[@class="custom-input-number el-input-number el-input-number--small"]//input
+        # fill 动作的输入内容。
         value: 2
 
       - name: 点击确定
@@ -49,5 +52,6 @@ loginpage:
         method: click
         locator: //button[.//span[normalize-space()='确定']]
 
+    # 业务步骤结束后，由测试文件读取该字段进行标题断言。
     assertion: 购物车
 

@@ -1,3 +1,5 @@
+# 复杂业务示例：新增、使用并删除 SHEIN 汇出模板。
+# {{template_suffix}} 会在测试开始前替换为时间戳，避免模板名称重复。
 loginpage:
   - title: shein汇出模板新增并删除
     des: shein汇出模板新增并删除

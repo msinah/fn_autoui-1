@@ -1,3 +1,9 @@
+"""把浏览器中的点击和输入操作录制为框架可执行的 YAML 步骤。
+
+实现方式是在目标页面注入 JavaScript 事件监听器，操作完成后再由 Python
+取回事件列表并追加到指定 YAML 文件。该工具是用例编写辅助，不参与 pytest 执行。
+"""
+
 from pathlib import Path
 
 from playwright.sync_api import Page
@@ -6,6 +12,7 @@ from unit_tools.log_util.recordlog import logs
 
 
 def install_interaction_recorder(page: Page) -> None:
+    """向当前页面注入点击、输入监听器和定位器生成逻辑。"""
     page.evaluate(
         """
         () => {
@@ -176,6 +183,7 @@ def install_interaction_recorder(page: Page) -> None:
 
 
 def collect_recorded_steps(page: Page) -> list[dict]:
+    """从页面中取回已录制且受框架支持的 click/fill 步骤。"""
     steps = page.evaluate("() => window.__fnAutoRecorderEvents || []")
     if not isinstance(steps, list):
         return []
@@ -187,6 +195,7 @@ def collect_recorded_steps(page: Page) -> list[dict]:
 
 
 def append_recorded_steps_to_yaml(yaml_path: str, steps: list[dict]) -> int:
+    """去重后把录制步骤插入 YAML，并返回实际新增数量。"""
     if not steps:
         return 0
 
@@ -219,6 +228,7 @@ def append_recorded_steps_to_yaml(yaml_path: str, steps: list[dict]) -> int:
 
 
 def _find_insert_index(lines: list[str]) -> int:
+    """优先在断言字段前找到新步骤的插入位置。"""
     for index, line in enumerate(lines):
         stripped = line.lstrip()
         if stripped.startswith("#      - name:"):
@@ -229,6 +239,7 @@ def _find_insert_index(lines: list[str]) -> int:
 
 
 def _render_step(step: dict) -> str:
+    """把单条录制结果渲染成符合项目结构的 YAML 文本块。"""
     method = str(step.get("method") or "").strip()
     locator = str(step.get("locator") or "").strip()
     if method not in {"click", "fill"} or not locator:
@@ -248,4 +259,5 @@ def _render_step(step: dict) -> str:
 
 
 def _yaml_quote(value: str) -> str:
+    """使用 YAML 单引号规则转义动态文本。"""
     return "'" + str(value).replace("'", "''") + "'"

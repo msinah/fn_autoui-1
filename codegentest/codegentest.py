@@ -1,8 +1,14 @@
+"""Playwright Codegen 生成的原始操作脚本示例。
+
+该文件用于保留或调试录制结果，不会被 pytest.ini 当作正式测试用例收集。
+"""
+
 import re
 from playwright.sync_api import Playwright, sync_playwright, expect
 
 
 def run(playwright: Playwright) -> None:
+    """启动浏览器并按 Codegen 生成的顺序回放页面操作。"""
     browser = playwright.chromium.launch(headless=False)
     context = browser.new_context()
     page = context.new_page()

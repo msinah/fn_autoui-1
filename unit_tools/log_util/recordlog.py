@@ -1,4 +1,6 @@
 # -*- coding:utf-8 -*-
+"""控制台彩色日志与滚动文件日志配置。"""
+
 import logging
 import os
 import time
@@ -6,6 +8,7 @@ from configs.setting import FILE_PATH
 from logging.handlers import RotatingFileHandler  # 按文件大小滚动备份
 import colorlog
 
+# 导入模块时确保日志目录存在，并按日期创建当天的日志文件。
 logs_path = FILE_PATH['log']
 if not os.path.exists(logs_path):
     os.mkdir(logs_path)
@@ -14,9 +17,11 @@ if not os.path.exists(logs_path):
 logfile_name = logs_path + r'\test.{}.log'.format(time.strftime('%Y%m%d'))
 
 class HandleLogs:
+    """创建全项目复用的 logger，避免每次导入都重复添加 Handler。"""
 
     @classmethod
     def setting_log_color(cls):
+        """创建仅用于控制台输出的彩色格式器。"""
         log_color_config = {
             'DEBUG': 'cyan',
             'INFO': 'green',
@@ -30,6 +35,7 @@ class HandleLogs:
 
     @classmethod
     def output_logs(cls):
+        """配置控制台及滚动文件输出，并返回 logger。"""
         logger = logging.getLogger(__name__)
         steam_format = cls.setting_log_color()
         # 防止重复打印日志
@@ -50,6 +56,7 @@ class HandleLogs:
 
         return logger
 
+# 其他模块统一通过 ``from ...recordlog import logs`` 使用此单例。
 handle = HandleLogs()
 logs = handle.output_logs()
 
