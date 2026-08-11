@@ -1,0 +1,66 @@
+loginpage:
+  - title: 蜂鸟定制 | 自发货订单
+    des: fbm购物车下单
+    skip: False
+    need_cookie: True    #是否需要登录cookie，默认是“是”，可不写
+    cases:
+
+      - name: 打开购物车页面
+        switch_to_page: False
+        method: goto
+        url: /fn/shoppingCart2
+
+      - name: 点击装箱发货
+        switch_to_page:  False
+        method: click
+        locator: get_by_text("装箱发货", exact=True)
+
+      - name: 选择店铺编号
+        switch_to_page:  False
+        method: click
+        locator: get_by_role("textbox", name="请选择店铺编号")
+
+      - name: 选择temu全托管
+        switch_to_page:  False
+        method: click
+        locator: get_by_text("temu全托管", exact=True)
+
+      - name: 点击打包方式
+        switch_to_page:  False
+        method: click
+        locator: //*[@id="app2"]/section/main/div/div/div[1]/div[1]/div[2]/div[1]/div[3]/div[2]/div/div/div[1]/span/span/i
+
+      - name: 选择混装
+        switch_to_page:  False
+        method: click
+        locator: get_by_text("混装", exact=True)
+
+      - name: 选择混装-混装
+        switch_to_page:  False
+        method: click
+        locator: css=[id^="cascader-menu-"][id$="-1-0"] >> text=混
+
+      - name: 请输入SKU
+        switch_to_page:  False
+        method: fill
+        locator: get_by_placeholder("请输入SKU")
+        value: X000002568
+
+      - name: 立即支付
+        switch_to_page: False
+        method: click
+        locator: //button[.//span[normalize-space()="立即支付"]] | //span[normalize-space()="立即支付"]
+
+      - name: 确认支付
+        switch_to_page: False
+        method: click
+        locator: //button[.//span[normalize-space()="确认支付"]] | //span[normalize-space()="确认支付"]
+
+      - name: 查看订单
+        switch_to_page: False
+        method: click
+        locator: //button[.//span[normalize-space()="查看订单"]] | //span[normalize-space()="查看订单"]
+
+    assertion: 蜂鸟定制 | 头程订单
+
+

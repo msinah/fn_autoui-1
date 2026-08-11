@@ -1,0 +1,69 @@
+loginpage:
+  - title: 蜂鸟定制 | 沃尔玛汇出记录
+    des: 沃尔玛汇出
+    skip: False
+    need_cookie: True
+    cases:
+
+      - name: 打开我的产品页面
+        switch_to_page: False
+        method: goto
+        url: /fn/productCustom
+
+      - name: 勾选第一个产品
+        switch_to_page: False
+        method: click
+        locator: (//div[contains(@class,'table-list')]//div[contains(@class,'table-item')]//label[contains(@class,'el-checkbox')])[1]
+
+      - name: 悬停平台汇出
+        switch_to_page: False
+        method: hover
+        locator: //button[.//span[contains(normalize-space(),'平台汇出')]]
+
+      - name: 点击沃尔玛汇出
+        switch_to_page: False
+        method: click
+        locator: //button[.//span[normalize-space()='沃尔玛(WalMart)']]
+
+      - name: 沃尔玛汇出-选择店铺
+        switch_to_page: False
+        method: click
+        locator: "//div[contains(@class,'el-dialog__wrapper') and not(contains(@style,'display: none'))]//*[normalize-space()='店铺']/following::input[contains(@class,'el-input__inner')][1]"
+
+      - name: 亚马逊汇出-选择店铺-选择沃尔玛美国店
+        switch_to_page: False
+        method: click
+        locator: 'css=.el-select-dropdown:visible .el-select-dropdown__item:has-text("沃尔玛美国店")'
+
+      - name: 亚马逊汇出-选择汇出范本
+        switch_to_page: False
+        method: click
+        locator: "//div[contains(@class,'el-dialog__wrapper') and not(contains(@style,'display: none'))]//*[normalize-space()='汇出范本']/following::input[contains(@class,'el-input__inner')][1]"
+
+      - name: 选择汇出范本-沃尔玛测试汇出
+        switch_to_page: False
+        method: click
+        locator: 'css=.el-select-dropdown:visible .el-select-dropdown__item:has-text("沃尔玛测试汇出")'
+
+      - name: 等待汇出详情弹窗加载
+        switch_to_page: False
+        method: wait_for_timeout
+        value: 1000
+
+      - name: 沃尔玛汇出-确认汇出
+        switch_to_page: False
+        method: click
+        locator: "//div[contains(@class,'el-dialog__wrapper') and not(contains(@style,'display: none'))]//button[.//span[normalize-space()='确认汇出']]"
+
+      - name: 等待汇出成功提示
+        switch_to_page: False
+        method: wait_for_timeout
+        value: 3000
+
+      - name: 点击提示的超链接-去查看
+        switch_to_page: False
+        method: click
+        locator: 'css=.el-message--success a:has-text("去查看")'
+
+    assertion: 蜂鸟定制 | 沃尔玛汇出记录
+    success_assertion: 'css=.el-message--success:has-text("汇出成功")'

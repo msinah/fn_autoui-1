@@ -1,0 +1,16 @@
+case_common:
+  allureEpic: UI自动化
+  allureFeature: 登录模块
+  allureStory: 登录
+
+loginpage:
+  - title: 登录成功
+    des: 登录成功的测试用例
+    skip: False
+    need_cookie: False    #是否需要登录cookie，默认是“是”，可不写
+    cases:
+
+      - name: 打开登录页面
+        switch_to_page: False
+        method: goto
+        url: /fnHome

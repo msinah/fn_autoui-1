@@ -1,0 +1,158 @@
+loginpage:
+  - title: shein汇出模板新增并删除
+    des: shein汇出模板新增并删除
+    skip: False
+    need_cookie: True
+    cases:
+
+      - name: 打开汇出模板页面
+        switch_to_page: False
+        method: goto
+        url: /fn/frontpage/remit/exportTemplate
+
+      - name: 切换到SHEIN模板
+        switch_to_page: False
+        method: click
+        locator: "css=.tab-content .content-box:nth-child(9)"
+
+      - name: 点击新增模板
+        switch_to_page: False
+        method: click
+        locator: "//button[.//span[normalize-space()='新增模板']]"
+
+      - name: 选择店铺名称
+        switch_to_page: False
+        method: click
+        locator: "//div[contains(@class,'el-dialog__wrapper') and not(contains(@style,'display: none'))]//*[normalize-space()='店铺名称']/following::input[contains(@class,'el-input__inner')][1]"
+
+      - name: 选择shein美国店
+        switch_to_page: False
+        method: click
+        locator: "//body/div[contains(@class,'el-select-dropdown') and not(contains(@style,'display: none'))][last()]//li[contains(@class,'el-select-dropdown__item') and contains(normalize-space(),'shein美国店')]"
+
+      - name: 输入模板名称
+        switch_to_page: False
+        method: fill
+        locator: "//div[contains(@class,'el-dialog__wrapper') and not(contains(@style,'display: none'))]//*[normalize-space()='模板名称']/following::input[contains(@class,'el-input__inner')][1]"
+        value: "自动化shein汇出模板{{template_suffix}}"
+
+      - name: 选择品类
+        switch_to_page: False
+        method: click
+        locator: "//div[contains(@class,'el-dialog__wrapper') and not(contains(@style,'display: none'))]//*[normalize-space()='品类']/following::input[contains(@class,'el-input__inner')][1]"
+
+      - name: 选择品类-xq测试1
+        switch_to_page: False
+        method: click
+        locator: "//body/div[contains(@class,'el-select-dropdown') and not(contains(@style,'display: none'))][last()]//li[contains(@class,'el-select-dropdown__item') and contains(normalize-space(),'xq-测试-1')]"
+
+      - name: 选择模板类型
+        switch_to_page: False
+        method: click
+        locator: "//div[contains(@class,'el-dialog__wrapper') and not(contains(@style,'display: none'))]//*[normalize-space()='模板类型']/following::input[contains(@class,'el-input__inner')][1]"
+
+      - name: 选择模板类型-xq测试1
+        switch_to_page: False
+        method: click
+        locator: "//body/div[contains(@class,'el-select-dropdown') and not(contains(@style,'display: none'))][last()]//li[contains(@class,'el-select-dropdown__item') and contains(normalize-space(),'xq-测试-1')]"
+
+      - name: 选择变体类型
+        switch_to_page: False
+        method: click
+        locator: "//div[contains(@class,'el-dialog__wrapper') and not(contains(@style,'display: none'))]//*[normalize-space()='变体类型']/following::input[contains(@class,'el-input__inner')][1]"
+
+      - name: 选择变体类型-颜色变体
+        switch_to_page: False
+        method: click
+        locator: "//body/div[contains(@class,'el-select-dropdown') and not(contains(@style,'display: none'))][last()]//li[contains(@class,'el-select-dropdown__item') and contains(normalize-space(),'颜色变体')]"
+
+      - name: 输入产品名称
+        switch_to_page: False
+        method: fill
+        locator: "//div[contains(@class,'el-dialog__wrapper') and not(contains(@style,'display: none'))]//*[normalize-space()='产品名称']/following::input[contains(@class,'el-input__inner')][1]"
+        value: "自动化shein产品{{template_suffix}}"
+
+      - name: 输入库存
+        switch_to_page: False
+        method: fill
+        locator: "//div[contains(@class,'el-dialog__wrapper') and not(contains(@style,'display: none'))]//*[normalize-space()='库存']/following::input[contains(@class,'el-input__inner')][1]"
+        value: 100
+
+      - name: 输入包装尺寸长
+        switch_to_page: False
+        method: fill
+        locator: "//div[contains(@class,'el-dialog__wrapper') and not(contains(@style,'display: none'))]//*[normalize-space()='包装尺寸']/following::input[contains(@class,'el-input__inner')][1]"
+        value: 60
+
+      - name: 输入包装尺寸宽
+        switch_to_page: False
+        method: fill
+        locator: "//div[contains(@class,'el-dialog__wrapper') and not(contains(@style,'display: none'))]//*[normalize-space()='包装尺寸']/following::input[contains(@class,'el-input__inner')][2]"
+        value: 30
+
+      - name: 输入包装尺寸高
+        switch_to_page: False
+        method: fill
+        locator: "//div[contains(@class,'el-dialog__wrapper') and not(contains(@style,'display: none'))]//*[normalize-space()='包装尺寸']/following::input[contains(@class,'el-input__inner')][3]"
+        value: 1
+
+      - name: 选择包装尺寸单位
+        switch_to_page: False
+        method: click
+        locator: "//div[contains(@class,'el-dialog__wrapper') and not(contains(@style,'display: none'))]//*[normalize-space()='包装尺寸']/following::input[contains(@class,'el-input__inner')][4]"
+
+      - name: 选择单位Inch
+        switch_to_page: False
+        method: click
+        locator: "//body/div[contains(@class,'el-select-dropdown') and not(contains(@style,'display: none'))][last()]//li[contains(@class,'el-select-dropdown__item') and contains(normalize-space(),'Inch')]"
+
+      - name: 输入价格
+        switch_to_page: False
+        method: fill
+        locator: "//div[contains(@class,'el-dialog__wrapper') and not(contains(@style,'display: none'))]//*[normalize-space()='价格']/following::input[contains(@class,'el-input__inner')][1]"
+        value: 300
+
+      - name: 保存新增模板
+        switch_to_page: False
+        method: click
+        locator: "//div[contains(@class,'el-dialog__wrapper') and not(contains(@style,'display: none'))]//button[.//span[normalize-space()='确定']]"
+
+      - name: 等待新增成功
+        switch_to_page: False
+        method: wait_for_timeout
+        value: 3000
+
+      - name: 搜索新增模板
+        switch_to_page: False
+        method: fill
+        locator: "//input[@placeholder='请输入模板名称']"
+        value: "自动化shein汇出模板{{template_suffix}}"
+
+      - name: 点击搜索
+        switch_to_page: False
+        method: click
+        locator: "//button[.//span[normalize-space()='搜索']]"
+
+      - name: 等待搜索结果
+        switch_to_page: False
+        method: wait_for_timeout
+        value: 1000
+
+      - name: 删除新增模板
+        switch_to_page: False
+        method: click
+        locator: "//tr[.//*[contains(normalize-space(),'自动化shein汇出模板{{template_suffix}}')]]//*[normalize-space()='删除']"
+
+      - name: 确认删除
+        switch_to_page: False
+        method: click
+        locator: "//div[contains(@class,'el-message-box__wrapper') and not(contains(@style,'display: none'))]//button[.//span[normalize-space()='确定']]"
+
+      - name: 等待删除成功
+        switch_to_page: False
+        method: wait_for_timeout
+        value: 2000
+
+    assertion: 蜂鸟定制 | 汇出模板
+    add_success_assertion: 'css=.el-message--success:has-text("新增成功")'
+    delete_success_assertion: 'css=.el-message--success:has-text("删除成功")'

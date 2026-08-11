@@ -1,0 +1,33 @@
+loginpage:
+  - title: 蜂鸟定制 | 自发货订单
+    des: fbm购物车下单
+    skip: False
+    need_cookie: True    #是否需要登录cookie，默认是“是”，可不写
+    cases:
+
+      - name: 打开我的产品页面
+        switch_to_page: False
+        method: goto
+        url: /fn/shoppingCart2
+
+      - name: 点击一件代发
+        switch_to_page: False
+        method: click
+        locator: //*[self::button or self::span or self::label][normalize-space()='一件代发' or .//*[normalize-space()='一件代发']][1]
+
+      - name: 立即支付
+        switch_to_page: False
+        method: click
+        locator: //span[text()="立即支付"]
+
+      - name: 确认支付
+        switch_to_page: False
+        method: click
+        locator: //span[text()="确认支付"]
+
+      - name: 查看订单
+        switch_to_page: False
+        method: click
+        locator: //span[text()="查看订单"]
+
+    assertion: 蜂鸟定制 | 自发货订单

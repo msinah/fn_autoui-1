@@ -1,0 +1,53 @@
+loginpage:
+  - title: 购物车
+    des: 我的产品添加购物车
+    skip: False
+    need_cookie: True    #是否需要登录cookie，默认是“是”，可不写
+    cases:
+
+      - name: 打开我的产品页面
+        switch_to_page: False
+        method: goto
+        url: /fn/productCustom
+
+#      - name: 勾选产品
+#        switch_to_page: False
+#        method: click
+#        locator: //*[@id="app2"]/section/main/div/div/div[2]/div[2]/div[1]/div/div[1]/div/div[1]/label/span/span
+      - name: 勾选第一个产品
+        switch_to_page: False
+        method: click
+        locator: (//div[contains(@class,'table-list')]//div[contains(@class,'table-item')]//label[contains(@class,'el-checkbox')])[1]
+
+      - name: 点击添加购物车
+        switch_to_page: False
+        method: click
+        locator: //span[text()="添加购物车"]
+
+      - name: 点击烫画
+        switch_to_page: False
+        method: click
+        locator: //label[contains(@class,'el-radio')][.//span[normalize-space()='烫画']]
+#      - name: 点击360uv打印
+#        switch_to_page: False
+#        method: click
+#        locator: /html/body/div[8]/div/div[2]/div/div[3]/table/tbody/tr/td[2]/div/div/div[1]/span/span/button/label/span[2]
+#
+#      - name: 点击哑光
+#        switch_to_page: False
+#        method: click
+#        locator: //label[contains(@class,'el-radio')][.//span[normalize-space()='哑光']]
+
+      - name: 下单数量
+        switch_to_page: False
+        method: fill
+        locator: //*[@class="custom-input-number el-input-number el-input-number--small"]//input
+        value: 2
+
+      - name: 点击确定
+        switch_to_page: False
+        method: click
+        locator: //button[.//span[normalize-space()='确定']]
+
+    assertion: 购物车
+

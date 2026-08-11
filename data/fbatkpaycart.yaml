@@ -1,0 +1,80 @@
+loginpage:
+  - title: 蜂鸟定制 | 自发货订单
+    des: fbm购物车下单
+    skip: False
+    need_cookie: True    #是否需要登录cookie，默认是“是”，可不写
+    cases:
+
+      - name: 打开购物车页面
+        switch_to_page: False
+        method: goto
+        url: /fn/shoppingCart2
+
+      - name: 点击装箱发货
+        switch_to_page:  False
+        method: click
+        locator: get_by_text("装箱发货", exact=True)
+
+      - name: 请选择店铺编号
+        switch_to_page: False
+        method: click
+        locator: get_by_role("textbox", name="请选择店铺编号")
+
+      - name: 选择tk店铺
+        switch_to_page: False
+        method: click
+        locator: get_by_text("TK美国店", exact=True)
+
+
+      - name: 请选择配送方式
+        switch_to_page: False
+        method: click
+        locator: get_by_role("textbox", name="请选择配送方式")
+
+      - name: 国内物流
+        switch_to_page: False
+        method: click
+        locator: get_by_text("国内物流", exact=True)
+
+      - name: 请选择贴标状态
+        switch_to_page: False
+        method: click
+        locator: get_by_role("textbox", name="请选择贴标状态")
+
+      - name: 贴标-是
+        switch_to_page: False
+        method: click
+        locator: get_by_role("listitem").filter(has_text="是")
+
+      - name: 修改地址
+        switch_to_page: False
+        method: click
+        locator: get_by_role("button",name="修改地址")
+
+      - name: 选择收货地址
+        switch_to_page: False
+        method: click
+        locator: get_by_role("button", name="选择").first
+
+      - name: 请输入SKU
+        switch_to_page: False
+        method: fill
+        locator: get_by_placeholder("请输入SKU")
+        value: X000002569
+
+      - name: 立即支付
+        switch_to_page: False
+        method: click
+        locator: //button[.//span[normalize-space()="立即支付"]] | //span[normalize-space()="立即支付"]
+
+      - name: 确认支付
+        switch_to_page: False
+        method: click
+        locator: //button[.//span[normalize-space()="确认支付"]] | //span[normalize-space()="确认支付"]
+
+      - name: 查看订单
+        switch_to_page: False
+        method: click
+        locator: //button[.//span[normalize-space()="查看订单"]] | //span[normalize-space()="查看订单"]
+
+    assertion: 蜂鸟定制 | 头程订单
