@@ -8,3 +8,10 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Local credentials and authentication state
+.env
+.env.*
+!.env.example
+auth/local_credentials.py
+configs/cookies.json
