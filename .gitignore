@@ -15,3 +15,8 @@ wheels/
 !.env.example
 auth/local_credentials.py
 configs/cookies.json
+
+# Runtime secrets and local artifacts
+configs/cookies.json
+logs/
+.idea/
